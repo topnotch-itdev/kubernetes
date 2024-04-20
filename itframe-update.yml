@@ -1,0 +1,66 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: itframe-prod
+  namespace: default
+  labels:
+    k8s: itframe-prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s: itframe-prod
+  template:
+    metadata:
+      labels:
+        k8s: itframe-prod
+    spec:
+      volumes:
+        - name: itframe-config
+          secret:
+            secretName: itframe-config
+            defaultMode: 420
+        - name: etcd-certs
+          secret:
+            secretName: etcd-certs
+            defaultMode: 420
+      containers:
+        - name: itframe-prod
+          image: registry.digitalocean.com/unmutedtech/itframe:debug
+          envFrom:
+            - secretRef:
+                name: itframe-config
+          resources: 
+            limits:
+              cpu: 500m
+          volumeMounts:
+            - name: itframe-config
+              readOnly: true
+              mountPath: /opt/itframe/source/config.json
+              subPath: itframe-config
+            - name: etcd-certs
+              mountPath: /etc/certs/ca.pem
+              subPath: ca.pem
+            - name: etcd-certs
+              mountPath: /etc/certs/client-server/client.pem
+              subPath: client.pem
+            - name: etcd-certs
+              mountPath: /etc/certs/client-server/client-key.pem
+              subPath: client-key.pem
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 300
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: unmutedtech
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

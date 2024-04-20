@@ -1,0 +1,105 @@
+
+etcdctl --user="dispatch" --password="" --cacert=/etc/certs/ca.pem  --cert=/etc/certs/client-server/etcd-0.unmutedte.ch.pem  --key=/etc/certs/client-server/etcd-0.unmutedte.ch-key.pem endpoint health
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml expose deployment rfs-itframe-redis --port=26379 --target-port=6379 --name=rfs-itframe-redis --type=LoadBalancer
+
+
+// For redis setting
+https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml describe configmap/rfs-itframe-redis
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml exec -it rfr-itframe-redis-0 -- redis-cli
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml exec pod/rfr-itframe-redis-0 -n redis -it -- sh
+
+config get repl*
+
+config set replica-read-only "no"
+
+
+
+// New deployments
+https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml get deployments --namespace=itframe
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml get namespace
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml get pods --namespace=itframe
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml describe deployment --namespace=itframe
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml delete pod itframe-59df65c6c9-b9x5v --now --namespace=itframe
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml set image deployment/itframe itframe=registry.digitalocean.com/unmutedtech/itframe:canary --namespace=itframe
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml rollout restart -n default deployment itframe-prod
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml rollout restart -n default deployment rfs-itframe-redis
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml apply -f ./itframe-update.yml --namespace=itframe
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml delete deployment.apps/itframe-prod
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml describe node pool-2g6qkaue1-mkn08
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml logs  -n  --previous
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml get events
+
+
+// Create secret
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml create secret generic etcd-certs --from-file=./ca.pem --from-file=./etcd-0.unmutedte.ch-key.pem --from-file=./etcd-0.unmutedte.ch.pem
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml get secret
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml delete -n default secret etcd-certs
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml create secret generic etcd-certs --from-file=./ca.pem --from-file=./client-key.pem --from-file=./client.pem
+
+
+// Show logs
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml logs pod/itframe-aaron-b9fbd6665-9zzh4
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml rollout restart -n default deployment itframe-prod
+
+
+// Scale replicas
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml scale -n default deployment itframe-prod --replicas=3
+
+
+// Enter pods
+kubectl exec -it pod_name -- /bin/bash
+
+
+// Mongodb backup
+
+sudo mongodump --username itframe --password Gsyu1gEy6JDBPCzdk6xvgsgNepGKYv28ewkswzeuhGFzwpitZaKi8pCycsJUsVk --uri="mongodb://itframe-mongo.itframe.svc.cluster.local" --db itframe --out ~/mongobackups
+
+sudo mongodump --db itframe --out ~/mongobackups
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml delete -n onepage persistentvolumeclaim code
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml delete -n onepage configmap nginx-config
+
+//*****Important*****
+Copied /var/www/html content to /code directory manually when nginx 502 BadGateway
+Refference video: https://www.youtube.com/watch?v=wCopMl1sTmw
+
+
+kubectl --kubeconfig=./k8s-prod-kubeconfig.yaml scale --replicas=0 deployment.apps/itframe-prod
+
+// PHP application is not worked on nginx service
+// That\'s why I deployed php application to apache image of docker
+// Worked correctly with php-onepage.yaml file.

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-onepage
+  namespace: onepage
+  labels:
+    app: php-onepage
+spec:
+  selector:
+    matchLabels:
+      app: php-onepage
+  template:
+    metadata:
+      labels:
+        app: php-onepage
+    spec:
+      containers:
+        - image: registry.digitalocean.com/unmutedtech/onepage:latest
+          name: php-onepage
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-onepage
+  namespace: onepage
+spec:
+  ports:
+  - name: php-onepage
+    targetPort: 80
+    port: 80
+    protocol: TCP
+  selector:
+    app: php-onepage
+  type: LoadBalancer

@@ -1,0 +1,30 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: itframe
+  namespace: default
+  labels:
+    k8s: itframe-prod
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30657
+  selector:
+    k8s: itframe-prod
+  clusterIP: 10.245.178.54
+  clusterIPs:
+    - 10.245.178.54
+  type: LoadBalancer
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  allocateLoadBalancerNodePorts: true
+  internalTrafficPolicy: Cluster
+status:
+  loadBalancer:
+    ingress:
+      - ip: 206.189.245.175

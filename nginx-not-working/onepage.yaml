@@ -1,0 +1,43 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: onepage
+  namespace: onepage
+  labels:
+    k8s-app: onepage
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: onepage
+      k8s-app: onepage
+  template:
+    metadata:
+      name: onepage
+      labels:
+        app: onepage
+        k8s-app: onepage
+    spec:
+      volumes:
+        - name: dir
+          hostPath:
+            path: /code
+      containers:
+        - name: onepage
+          image: registry.digitalocean.com/unmutedtech/onepage:latest
+          volumeMounts:
+            - name: dir
+              mountPath: /code
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      initContainers:
+        - name: install
+          image: busybox
+          volumeMounts:
+            - name: dir
+              mountPath: /code
+          command:
+            - cp
+            - "-r"
+            - "/var/www/."
+            - "/code"

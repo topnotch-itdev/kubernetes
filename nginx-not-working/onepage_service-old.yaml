@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: onepage
+  namespace: onepage
+  labels:
+    k8s-app: onepage
+spec:
+  ports:
+    - protocol: TCP 
+      port: 80
+      targetPort: 80
+  selector:
+    app: onepage
+    k8s-app: onepage
+  type: LoadBalancer

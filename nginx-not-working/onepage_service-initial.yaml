@@ -1,0 +1,88 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: onepage
+  namespace: onepage
+  uid: 6769cdea-75e0-4bb4-85b9-8ed1d8908ad4
+  resourceVersion: '5237777'
+  creationTimestamp: '2023-01-12T16:24:10Z'
+  labels:
+    k8s-app: onepage
+  annotations:
+    kubernetes.digitalocean.com/load-balancer-id: 83ac2929-0f51-4689-9300-af44801e9e54
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  managedFields:
+    - manager: digitalocean-cloud-controller-manager
+      operation: Update
+      apiVersion: v1
+      time: '2023-01-12T16:24:11Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubernetes.digitalocean.com/load-balancer-id: {}
+    - manager: digitalocean-cloud-controller-manager
+      operation: Update
+      apiVersion: v1
+      time: '2023-01-12T16:26:39Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:finalizers:
+            .: {}
+            v:"service.kubernetes.io/load-balancer-cleanup": {}
+        f:status:
+          f:loadBalancer:
+            f:ingress: {}
+      subresource: status
+    - manager: k8saasapi
+      operation: Update
+      apiVersion: v1
+      time: '2023-01-12T16:28:21Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:labels:
+            .: {}
+            f:k8s-app: {}
+        f:spec:
+          f:allocateLoadBalancerNodePorts: {}
+          f:externalTrafficPolicy: {}
+          f:internalTrafficPolicy: {}
+          f:ports:
+            .: {}
+            k:{"port":80,"protocol":"TCP"}:
+              .: {}
+              f:name: {}
+              f:port: {}
+              f:protocol: {}
+              f:targetPort: {}
+          f:selector: {}
+          f:sessionAffinity: {}
+          f:type: {}
+spec:
+  ports:
+    - name: tcp-80-8080-m6sbs
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31737
+  selector:
+    k8s-app: onepage
+  clusterIP: 10.245.172.201
+  clusterIPs:
+    - 10.245.172.201
+  type: LoadBalancer
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  allocateLoadBalancerNodePorts: true
+  internalTrafficPolicy: Cluster
+status:
+  loadBalancer:
+    ingress:
+      - ip: 68.183.254.93

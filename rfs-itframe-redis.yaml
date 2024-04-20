@@ -1,0 +1,73 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rfs-itframe-redis
+  namespace: default
+  uid: 1eb81d5d-bd31-4526-9276-adb112def229
+  resourceVersion: '2254745'
+  creationTimestamp: '2023-01-07T14:49:04Z'
+  labels:
+    app.kubernetes.io/component: sentinel
+    app.kubernetes.io/managed-by: redis-operator
+    app.kubernetes.io/name: itframe-redis
+    app.kubernetes.io/part-of: redis-failover
+    redisfailovers.databases.spotahome.com/name: itframe-redis
+  ownerReferences:
+    - apiVersion: databases.spotahome.com/v1
+      kind: RedisFailover
+      name: itframe-redis
+      uid: 36b13412-1ff7-4c0f-ba6c-4f59f1b921e6
+      controller: true
+      blockOwnerDeletion: true
+  managedFields:
+    - manager: redis-operator
+      operation: Update
+      apiVersion: v1
+      time: '2023-01-07T14:49:04Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:labels:
+            .: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/managed-by: {}
+            f:app.kubernetes.io/name: {}
+            f:app.kubernetes.io/part-of: {}
+            f:redisfailovers.databases.spotahome.com/name: {}
+          f:ownerReferences:
+            .: {}
+            k:{"uid":"36b13412-1ff7-4c0f-ba6c-4f59f1b921e6"}: {}
+        f:spec:
+          f:internalTrafficPolicy: {}
+          f:ports:
+            .: {}
+            k:{"port":26379,"protocol":"TCP"}:
+              .: {}
+              f:name: {}
+              f:port: {}
+              f:protocol: {}
+              f:targetPort: {}
+          f:selector: {}
+          f:sessionAffinity: {}
+          f:type: {}
+spec:
+  ports:
+    - name: sentinel
+      protocol: TCP
+      port: 26379
+      targetPort: 26379
+  selector:
+    app.kubernetes.io/component: sentinel
+    app.kubernetes.io/name: itframe-redis
+    app.kubernetes.io/part-of: redis-failover
+  clusterIP: 10.245.172.34
+  clusterIPs:
+    - 10.245.172.34
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+status:
+  loadBalancer: {}
